@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript">
+        var websocket = null;
+        function connection() {
+            var username = document.getElementById("name").value;
+//           创建链接
+            if('WebSocket' in window){//判断浏览器是否支持websocket
+                    websocket = new WebSocket("ws://"+document.location.host+"/websocket/"+username);
+            }else {
+                alert("浏览器不支持！")
+            }
+            //链接
+            websocket.onopen = function () {
+                document.getElementById("message").innerHTML = "建立链接";
+            };
+            //消息
+            websocket.onmessage = function (event) {
+            var data = event.data;
+            document.getElementById("message").innerHTML = data;
+            };
+            //错误
+            websocket.onerror = function () {
+                document.getElementById("message").innerHTML = "出现异常";
+            };
+            //关闭
+            websocket.onclose = function () {
+            document.getElementById("message").innerHTML = "链接关闭";
+            };
+
+            window.onberforeunload = function () {//当浏览器页面关闭的时候，关闭链接。防止服务器出现异常
+                if(websocket!=null){
+                    websocket.close()
+                }
+            }
+        }
+        function sendMesage() {
+            //获取到发送给谁
+            var toUser = document.getElementById("toUser").value;
+            //获取到发动的内容
+            var toMessage = document.getElementById("toMessage").value;
+            if(websocket!=null){
+                var message = '{"toUser":"'+toUser+'","toMessage":"'+toMessage+'"}';
+                websocket.send(message);
+            }
+        }
+    </script>
+</head>
+<body>
+<!--打开链接-->
+<input type="text" id="name"><button onclick="connection()">链接</button>
+接收者名字:<input type="text" name="toUser" id="toUser"><br>
+内容：<input type="text" name="toMessage" id="toMessage">
+<button onclick="sendMesage()">发送</button><br>
+<span id="message"></span>
+</body>
+</html>
