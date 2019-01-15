@@ -8,6 +8,7 @@ import javax.websocket.server.ServerEndpoint;
 import java.util.HashMap;
 import java.util.Map;
 
+
 /**
  * servlet是单例对象，但是websocket是多例对象。因为他需要实施连接。需要知道每个链接是谁
  */
@@ -29,7 +30,7 @@ public class Websocket {
         this.name = name;
         this.session = session;
         websocketMap.put(name, this);
-        System.out.println(name+"用户建立链接了");
+        System.out.println(name + "用户建立链接了");
     }
 
     /**
@@ -51,10 +52,10 @@ public class Websocket {
         //通过session发消息
         if (websocket != null) {
             Session tosession = websocket.getSession();//获取到服务器和目标接收者的链接，可能会抛出空指针异常
-            if (tosession.isOpen()){//如果链接是打开状态
+            if (tosession.isOpen()) {//如果链接是打开状态
                 tosession.getAsyncRemote().sendText(toMessage);//找到链接的另外一段，然后发送消息
             }
-        }else {
+        } else {
             //对方不在线 缓存发送的消息，返回对方不在线给发送者
             session.getAsyncRemote().sendText("对方不在线");
         }
